@@ -1,0 +1,5 @@
+/venv
+credentials.csv
+*.pyc
+*.swp
+mturk_django/static
