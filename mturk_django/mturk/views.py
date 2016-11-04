@@ -12,11 +12,13 @@ def index(request):
             'worker_id': request.GET.get("workerId", "None"),
             'assignment_id' : request.GET.get("assignmentId", "None"),
             'amazon_host' : "https://www.mturk.com/mturk/externalSubmit",
+            'in_dev' : request.GET.get("dev", "None"),
             'hit_id' : request.GET.get("hitId", "None"),
             }
+    context['in_dev'] = context['in_dev'] == "True"
 
     res = render(request, 'mturk/question.html', context)
-    res['x-frame-options'] = 'memes?'
+    res['x-frame-options'] = 'do you like memes?'
     return res 
 
 def get_sent(request):
