@@ -12,7 +12,9 @@ conn = MTurkConnection(aws_access_key_id=AMAZON_ACCESS_KEY_ID,
                        aws_secret_access_key=AMAZON_SECRET_ACCESS_KEY,
                        host=AMAZON_HOST)
 
-url = "https://mturk.adeutry.info"
+HIT_URL_PROD = "https://mturk.adeutry.info/fluency_1"
+HIT_URL_DEV =  "https://mturk.adeutry.info/fluency_1?dev=True"
+
 title = "Evaluate Translations"
 description = "Evaluate the performance of Machine Translation systems. Judge how fluent a sentence is."
 keywords = ["language", "translation"]
@@ -25,8 +27,10 @@ question_form = ExternalQuestion(url, frame_height)
 
 if sys.argv[1] == "prod":
     amazon_url = AMAZON_HOST 
+    hit_url    = HIT_URL_PROD
 else if sys.argv[1] == "dev": 
     amazon_url = AMAZON_HOST_DEV
+    hit_url    = HIT_URL_DEV
 
 for i in range(1):
         create_hit_result = conn.create_hit(
