@@ -3,6 +3,9 @@ from django.http import HttpResponse
 from .models import Sentence, Translation
 import pdb, random, json
 
+SUBMIT_URL_DEV =  "https://workersandbox.mturk.com/mturk/externalSubmit"
+SUBMIT_URL_PROD = "https://mturk.com/mturk/externalSubmit"
+
 def index(request):
     
     sents = Sentence.objects.all()
@@ -15,7 +18,14 @@ def index(request):
             'in_dev' : request.GET.get("dev", "None"),
             'hit_id' : request.GET.get("hitId", "None"),
             }
+
     context['in_dev'] = context['in_dev'] == "True"
+
+    # set external submit url
+    if context['in_dev']:
+        context['amazon_host'] = SUBMIT_URL_DEV
+    else:
+        context['amazon_host'] = SUBMIT_URL_PROD
 
     res = render(request, 'mturk/question.html', context)
     res['x-frame-options'] = 'do you like memes?'

@@ -85,18 +85,33 @@
 
     #temple-header img {
         height: 45px;
+        float: left;
     }
 
     #temple-header {
         border-bottom: 1px solid #c9c9c9;
         padding: 7px 12px;
         background-color: white;
+        width: 100%;
+        display: flex;
+        align-items: center;
     }
+
+    #dev-notice {
+        font-family: sans-serif;
+        font-size: 18px;
+        padding: 5px 5px;
+        margin-left: 21px;
   </style>
   </head>
   <body>
      <div id="temple-header">
           <img src="https://upload.wikimedia.org/wikipedia/commons/3/32/Temple_University_logo.png">
+            {% if in_dev %}
+            <div id="dev-notice">
+                <strong>DEVELOPMENT</strong>
+            </div>
+            {% endif %}
      </div>
      <div class="main-window">
       {% if assignment_id == "ASSIGNMENT_ID_NOT_AVAILABLE" %}
@@ -104,10 +119,7 @@
           Thank you for your interest in completing our HIT. Below you can find an example of a single question included in our HIT. <strong>Please note that one HIT contains 50 such questions.</strong> 
       </div>
       {% endif %}
-      {% if in_dev %}
-          <strong>WE'RE IN DEV</strong>
-      {% endif %}
-  	<div class="description">
+        <div class="description">
   	Using the scale below, indicate how much you agree with the following statement:
         <div id="hit-counter">0/100</div>
   		<div class="statement">
@@ -174,11 +186,11 @@
        };
 
        if( context.assignment_id == "ASSIGNMENT_ID_NOT_AVAILABLE") {
-           $.get("https://mturk.adeutry.info/get_trans", function (res) {
+           $.get("https://mturk.adeutry.info/fluency_1/get_trans", function (res) {
                $(".sentence-container").html(res);
            });
        } else {
-           $.getJSON("https://mturk.adeutry.info/get_hit_questions", function (res){
+           $.getJSON("https://mturk.adeutry.info/fluency_1/get_hit_questions", function (res){
                $("#rating-form").data("questions", res);
                console.log("got " + $("#rating-form").data("questions").length + " questions");
                $("#rating-form").data("currentQues", res.pop());
