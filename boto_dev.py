@@ -1,6 +1,7 @@
 from boto.mturk.connection import MTurkConnection
 from boto.mturk.question import ExternalQuestion
 from boto.mturk.price import Price
+from tabulate import tabulate
 import sys
 
 AMAZON_HOST = "mechanicalturk.amazonaws.com"
@@ -25,3 +26,12 @@ conn = MTurkConnection(aws_access_key_id=AMAZON_ACCESS_KEY_ID,
                        aws_secret_access_key=AMAZON_SECRET_ACCESS_KEY,
                        host=amazon_url)
 hits = list(conn.get_all_hits())
+
+col_names = ['id', 'status', 'review_status', 'available', 'reviewed', 'to review']
+tbl_rows = [col_names]
+for hit in hits:
+    row = [hit.HITId, hit.HITStatus, hit.HITReviewStatus, hit.NumberOfAssignmentsAvailable, hit.NumberOfAssignmentsCompleted, hit.NumberOfAssignmentsPending]
+    tbl_rows.append(row)
+
+print(tabulate(tbl_rows))
+

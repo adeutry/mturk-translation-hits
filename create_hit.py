@@ -16,7 +16,7 @@ title = "Evaluate Translations"
 description = "Evaluate the performance of Machine Translation systems. Judge how fluent a sentence is."
 keywords = ["language", "translation"]
 frame_height = 650
-amount = 0.30
+amount = 0.35
 
 
 # num_hits = 1 or int(iys.argv[1])
@@ -39,7 +39,7 @@ for i in range(1):
                 title = title,
                 description = description,
                 keywords = keywords,
-                max_assignments = 5,
+                max_assignments = 3,
                 question = question_form,
                 reward = Price(amount=amount)
                 )

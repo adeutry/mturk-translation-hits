@@ -19,7 +19,7 @@ def index(request):
             'hit_id' : request.GET.get("hitId", "None"),
             }
 
-    context['in_dev'] = context['in_dev'] == "True"
+    context['in_dev'] = (context['in_dev'] == "True")
 
     # set external submit url
     if context['in_dev']:
