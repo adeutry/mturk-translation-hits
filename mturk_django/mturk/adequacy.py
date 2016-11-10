@@ -1,0 +1,97 @@
+from django.shortcuts import render
+from django.http import HttpResponse
+from .models import Sentence, Translation
+import pdb, random, json
+
+SUBMIT_URL_DEV =  "https://workersandbox.mturk.com/mturk/externalSubmit"
+SUBMIT_URL_PROD = "https://www.mturk.com/mturk/externalSubmit"
+
+def index(request):
+    
+    sents = Sentence.objects.all()
+    sent = random.sample(list(sents), 1)[0]
+    # prepare the context
+    context = {
+            'worker_id': request.GET.get("workerId", "None"),
+            'assignment_id' : request.GET.get("assignmentId", "None"),
+            'amazon_host' : "https://www.mturk.com/mturk/externalSubmit",
+            'in_dev' : request.GET.get("dev", "None"),
+            'hit_id' : request.GET.get("hitId", "None"),
+            }
+
+    context['in_dev'] = (context['in_dev'] == "True")
+
+    # set external submit url
+    if context['in_dev']:
+        context['amazon_host'] = SUBMIT_URL_DEV
+    else:
+        context['amazon_host'] = SUBMIT_URL_PROD
+
+    res = render(request, 'mturk/question.html', context)
+    res['x-frame-options'] = 'do you like memes?'
+    return res 
+
+def get_sent(request):
+    sents = Sentence.objects.all()
+    sent = random.sample(list(sents), 1)[0]
+    return HttpResponse(sent.text)
+
+def get_trans(request):
+    all_trans = Translation.objects.all()
+    trans = random.sample(list(all_trans), 1)[0]
+    return HttpResponse(trans.trans_text)
+ 
+def get_hit_questions(request):
+    '''
+    Construct the list of question objects for a single fluency hit
+    The list will contain 35 legitimate fluency questions along with
+    15 questions for the purpose of quality control
+    5 bad references
+    5 good references
+    5 repeat
+    '''
+    import nltk
+
+    questions = list()
+
+    #pick 35 random translations that can still be used
+    all_trans = list(Translation.objects.all().exclude(use_count=0))
+    trans = random.sample(all_trans, 35)
+
+    #decrement their use counts
+    for t in trans:
+        q = { 'text': t.trans_text, 'trans_id': t.id , 'q_type': '0'}
+        questions.append(q)
+        t.use_count -= 1
+        t.save()
+
+    #5 bad references
+    # create bad references by randomly removing words
+    rmv_count = 2
+    bad_trans_orig = random.sample(all_trans, 5)
+
+    for t in bad_trans_orig:
+        t_tokens = nltk.word_tokenize(t.trans_text)
+        if len(t_tokens) >= rmv_count + 2:
+            rand_ind = random.sample(range(1,len(t_tokens)), rmv_count)
+            for i in sorted(rand_ind, reverse=True):
+                del t_tokens[i]
+            trans_text = ' '.join(t_tokens)
+            q = { 'text': trans_text, 'trans_id': t.id, 'q_type': '1' }
+            questions.append(q)
+        
+
+    #5 good references
+    good_trans = random.sample(all_trans, 5)
+    for t in good_trans: 
+        q = { 'text': t.text, 'trans_id': t.id, 'q_type': '2' }
+        questions.append(q)
+
+    #5 repeats
+    repeat_trans = random.sample(trans, 5)
+    for t in repeat_trans:
+        q = { 'text': t.trans_text, 'trans_id': t.id, 'q_type': '3' }
+        questions.append(q)
+
+    random.shuffle(questions)
+    return HttpResponse(json.dumps(questions))
