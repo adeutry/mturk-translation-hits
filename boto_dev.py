@@ -27,10 +27,15 @@ conn = MTurkConnection(aws_access_key_id=AMAZON_ACCESS_KEY_ID,
                        host=amazon_url)
 hits = list(conn.get_all_hits())
 
-col_names = ['id', 'status', 'review_status', 'available', 'reviewed', 'to review']
+col_names = ['id', 'status', 'review_status', 'available', 'reviewed', 'remaining']
 tbl_rows = [col_names]
-for hit in hits:
-    row = [hit.HITId, hit.HITStatus, hit.HITReviewStatus, hit.NumberOfAssignmentsAvailable, hit.NumberOfAssignmentsCompleted, hit.NumberOfAssignmentsPending]
+for hit in [h for h in hits if not h.expired]:
+    row = [hit.HITId,
+            hit.HITStatus, 
+            hit.HITReviewStatus, 
+            hit.NumberOfAssignmentsAvailable, 
+            hit.NumberOfAssignmentsCompleted, 
+            hit.NumberOfAssignmentsPending]
     tbl_rows.append(row)
 
 print(tabulate(tbl_rows))

@@ -34,7 +34,7 @@ conn = MTurkConnection(aws_access_key_id=AMAZON_ACCESS_KEY_ID,
                        aws_secret_access_key=AMAZON_SECRET_ACCESS_KEY,
                        host=amazon_url)
 
-for i in range(1):
+for i in range(3):
         create_hit_result = conn.create_hit(
                 title = title,
                 description = description,

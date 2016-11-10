@@ -4,7 +4,7 @@ from .models import Sentence, Translation
 import pdb, random, json
 
 SUBMIT_URL_DEV =  "https://workersandbox.mturk.com/mturk/externalSubmit"
-SUBMIT_URL_PROD = "https://mturk.com/mturk/externalSubmit"
+SUBMIT_URL_PROD = "https://www.mturk.com/mturk/externalSubmit"
 
 def index(request):
     

@@ -23,9 +23,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '76s%#xm&6ii@$lgxknd!evic7y-03ui@k3@*m)$zj(9ry^q69o'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['mturk.adeutry.info']
 
 
 # Application definition
@@ -123,3 +123,60 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "static/")
+
+
+# Logging
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format' : "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
+            'datefmt' : "%d/%b/%Y %H:%M:%S"
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+        'request' : {
+            'format' : "[%(asctime)s] %(status_code)s - %(message)s",
+            'datefmt' : "%d/%b/%Y %H:%M:%S",
+        },
+    },
+    'handlers': {
+         'file_debug': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'logs/debug.log',
+            'formatter': 'verbose'
+        },
+        'file_error': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': 'logs/error.log',
+            'formatter': 'verbose'
+        },
+        'request_log_handler': {
+            'level' : 'DEBUG',
+            'class' : 'logging.FileHandler',
+            'filename': 'logs/requests.log',
+            'formatter': 'request',
+            },
+    },
+    'loggers': {
+        'django': {
+            'handlers':['file_debug', 'file_error'],
+            'propagate': True,
+            'level':'DEBUG',
+        },
+        'django.request': {
+             'handlers': ['request_log_handler'],
+             'level': 'DEBUG',
+         },
+        'mturk': {
+            'handlers': ['file_debug', 'file_error'],
+            'propagate' : True,
+            'level': 'DEBUG',
+        },
+    }
+}
