@@ -25,7 +25,7 @@ SECRET_KEY = '76s%#xm&6ii@$lgxknd!evic7y-03ui@k3@*m)$zj(9ry^q69o'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['mturk.adeutry.info']
+ALLOWED_HOSTS = ['mturk.adeutry.info', 'localhost']
 
 
 # Application definition

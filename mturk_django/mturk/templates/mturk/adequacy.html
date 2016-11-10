@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>title</title>
+  <style type="text/css">
+  	body, .main-window {
+  		background-color: #F3F3F3;
+  	}
+
+    body {
+        margin: 0px;
+       }
+
+  	.main-window {
+  		font-family: sans-serif;
+  		
+  		padding: 40px;
+  		max-width: 768px;
+  		margin: auto;
+  	}
+
+  	.statement {
+  		text-align: center;
+	    padding: 27px 10px;
+	    font-weight: 900;
+  	}
+
+  	.sentence-container {
+  		padding: 35px 53px;
+	    border: 1px solid #CCCCCC;
+	    border-radius: 3px;
+	    background-color: white;
+	    line-height: 1.5em;
+	    font-family: 'Georgia', serif;
+  	}
+
+  	.rating-button {
+	    width: 50px;
+	    float: left;
+	    text-align: center;
+	}
+
+	.rating-container {
+		display: table;
+	    margin: auto;
+	    margin-top: 30px;
+	}
+
+	.rating-button label,
+	.rating-button input {
+		cursor: pointer;
+		padding: 7px 15px 23px 15px;
+	}
+
+	.rating-button input {
+		margin: 0px;
+	    width: 18px;
+	    height: 22px;
+	}
+    .rating-buttons {
+        display: flex;
+        align-items: center;
+    }
+
+    #rating-form-submit {
+        margin: auto;
+        display: table;
+        margin-top: 19px;
+        padding: 4px 28px;
+        font-weight: 700;
+    }
+  
+    #hit-counter {
+       float: right;
+       font-weight: bold;
+       color: #5f5f5f;
+    } 
+
+    #preview{
+        background-color: #eed7c0;
+        padding: 18px 32px;
+        margin-bottom: 24px;
+    }
+
+    #temple-header img {
+        height: 45px;
+        float: left;
+    }
+
+    #temple-header {
+        border-bottom: 1px solid #c9c9c9;
+        padding: 7px 12px;
+        background-color: white;
+        width: 100%;
+        display: flex;
+        align-items: center;
+    }
+
+    #dev-notice {
+        font-family: sans-serif;
+        font-size: 18px;
+        padding: 5px 5px;
+        margin-left: 21px;
+    }
+
+    #bottom-sentence-container {
+        margin-top: 15px;
+        border-top: 1px solid #b4b4b4;
+        padding-top: 15px;
+    }
+  </style>
+  </head>
+  <body>
+     <div id="temple-header">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/3/32/Temple_University_logo.png">
+            {% if in_dev %}
+            <div id="dev-notice">
+                <strong>DEVELOPMENT</strong>
+            </div>
+            {% endif %}
+     </div>
+     <div class="main-window">
+      {% if assignment_id == "ASSIGNMENT_ID_NOT_AVAILABLE" %}
+      <div id="preview">
+          Thank you for your interest in completing our HIT. Below you can find an example of a single question included in our HIT. <strong>Please note that one HIT contains 50 such questions.</strong> 
+      </div>
+      {% endif %}
+        <div class="description">
+  	Using the scale below, indicate how much you agree with the following statement:
+        <div id="hit-counter">0/100</div>
+  		<div class="statement">
+  		The bottom sentence adequately expresses the meaning of the top sentence.
+  		</div>
+  	</div>
+    <div class="sentence-container">
+        <div id="top-sentence-container"></div>
+        <div id="bottom-sentence-container"></div>
+    </div>
+  	<div class="rating-container">
+        <form action="{{ amazon_host }}" method="POST" id="rating-form">
+            <input type="hidden" name="workerId" value="{{ worker_id }}">
+            <input type="hidden" name="assignmentId" value="{{ assignment_id }}">
+            <input type="hidden" name="amazon_host" value="{{ amazon_host }}">
+            <input type="hidden" name="hitId" value="{{ hit_id }}">
+            <div class="rating-buttons">
+                <span style="float: left;color: #ff6161;font-weight: 600;">Strongly Disagree</span>
+                    <div class="rating-button">
+                        <label for="-3">-3</label><br><input id="-3" type="radio" name="rating" value="-3"> 
+                    </div>
+                    <div class="rating-button">
+                        <label for="-2">-2</label><br><input id="-2" type="radio" name="rating" value="-2"> 
+                    </div>
+                    <div class="rating-button">
+                        <label for="-1">-1</label><br><input id="-1" type="radio" name="rating" value="-1"> 
+                    </div>
+                    <div class="rating-button">
+                        <label for="0">0</label><br><input id="0" type="radio" name="rating" value="0"> 
+                    </div>
+                    <div class="rating-button">
+                        <label for="+1">+1</label><br><input id="+1" type="radio" name="rating" value="+1"> 
+                    </div>
+                    <div class="rating-button">
+                        <label for="+2">+2</label><br><input id="+2" type="radio" name="rating" value="+2"> 
+                    </div>
+                    <div class="rating-button">
+                        <label for="+3">+3</label><br><input id="+3" type="radio" name="rating" value="+3"> 
+                    </div>
+                    <span style="font-weight: 600;color: #46c546">Strongly Agree</span>
+            </div>
+            <input id="rating-form-submit" type="submit" value="Next">
+  	    </form>
+  	</div>
+    
+  </div>
+  
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
+  <script type="text/javascript">
+   function autorun()
+   {
+       var maxCount = 50;
+       $('#hit-counter').data("count", 0);
+       var count = $("#hit-counter").data("count") ;
+       $("#hit-counter").html((count + 1) +" of " + maxCount);
+
+       // array to store the survey answers
+       var answerData = [];
+        
+       // assign context to serverside object
+       var context = {
+            worker_id : "{{ worker_id }}",
+            assignment_id : "{{ assignment_id }}",
+            amazon_host : "{{ amazon_host }}",
+            hit_id : "{{ hit_id }}",
+       };
+
+       if( context.assignment_id == "ASSIGNMENT_ID_NOT_AVAILABLE") {
+           $.get("https://mturk.adeutry.info/adequacy_1/get_trans", function (res) {
+               $("#top-sentence-container").html(res);
+           });
+       } else {
+           $.getJSON("https://mturk.adeutry.info/adequacy_1/get_hit_questions", function (res){
+               $("#rating-form").data("questions", res);
+               console.log("got " + $("#rating-form").data("questions").length + " questions");
+               $("#rating-form").data("currentQues", res.pop());
+               $("#top-sentence-container").html($("#rating-form").data("currentQues").original)
+               $("#bottom-sentence-container").html($("#rating-form").data("currentQues").trans_text)
+           });
+       }
+
+       // initialize timer values for per-hit time and total Hit time
+       $('#rating-form').data("timer-start", Date.now());
+       $('#rating-form').data("hit-start-time", Date.now());
+
+       $('#rating-form').submit(function(e) {
+
+              // dont submit the form if questions remain
+               if(!$("#rating-form").data("readyToSubmit")){
+                  e.preventDefault();
+               }
+
+              // get the selected answer 
+              var selectedAnswer = $(".rating-button input:checked");
+
+              //check to see if the user even selected anything
+              if( selectedAnswer.length == 0 ) {
+
+                   console.log("Make a choice, silly!");
+
+              } else if (!$("#rating-form").data("readyToSubmit")) {
+
+                  // record elapsed time
+                  var timeElapsed = (Date.now() - $("#rating-form").data("timer-start"))/1000;
+                  $('#rating-form').data("timer-start", Date.now());
+
+                  // add this answer to our answer list
+                  currentQues = $("#rating-form").data("currentQues")
+                  answerData.push({
+                          'trans_id' : currentQues.trans_id, 
+                          'answer' : selectedAnswer[0].value, 
+                          'time' : timeElapsed ,
+                          'type' : currentQues.q_type});
+                  count ++  ;
+
+                  // check if need to get another sentence
+                  if ( $("#rating-form").data("questions").length == 0 ) {
+
+                      var answerDataJson = JSON.stringify(answerData);
+                      var totalHitTime = (Date.now() - $('#rating-form').data("hit-start-time"))/1000;
+
+                      //build hidden input containing answer data and add it to form
+                      var answerDataInput = $("<input>")
+                                            .attr("type", "hidden")
+                                            .attr("name", "answerData").val(answerDataJson);
+
+                       $("#rating-form").append($(answerDataInput));
+
+                      //build input containing total hit time and add it for form
+                      var hitTimeInput = $("<input>")
+                                            .attr("type", "hidden")
+                                            .attr("name", "totalHitTime").val(totalHitTime);
+
+                      $('#rating-form').append(hitTimeInput);
+                      $("#rating-form").data("readyToSubmit", true);
+                      $("#rating-form").submit();
+
+                  } else {
+
+                        // get a new sentence
+                        currentQues = $("#rating-form").data("questions").pop();
+                        $("#rating-form").data("currentQues", currentQues);
+                        $("#top-sentence-container").html(currentQues.original);
+                        $("#bottom-sentence-container").html(currentQues.trans_text);
+                        $(".rating-button input:checked").prop("checked", false);
+                        $("#hit-counter").html((count + 1) +" of " + maxCount);
+                  }
+
+              }
+        });  
+  
+   }
+   if (window.addEventListener) window.addEventListener("load", autorun, false);
+   else if (window.attachEvent) window.attachEvent("onload", autorun);
+   else window.onload = autorun;
+  </script>
+  </body>
+</html>
