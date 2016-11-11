@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import Sentence, Translation
+from ..models import Sentence, Translation
 import pdb, random, json
 import logging
 
@@ -28,20 +28,16 @@ def index(request):
     else:
         context['amazon_host'] = SUBMIT_URL_PROD
 
-    res = render(request, 'mturk/adequacy.html', context)
+    res = render(request, 'mturk/paraphrase.html', context)
     res['x-frame-options'] = 'do you like memes?'
     return res 
 
-def get_sent(request):
-    sents = Sentence.objects.all()
-    sent = random.sample(list(sents), 1)[0]
-    return HttpResponse(sent.text)
+def get_rtt(request):
+    text = request.GET.get("text", "None")
+    from . import utils
+    rtt = utils.rtt(text, "de")
+    return HttpResponse(rtt)
 
-def get_trans(request):
-    all_trans = Translation.objects.all()
-    trans = random.sample(list(all_trans), 1)[0]
-    return HttpResponse(trans.trans_text)
- 
 def get_hit_questions(request):
     '''
     Construct the list of question objects for a single fluency hit

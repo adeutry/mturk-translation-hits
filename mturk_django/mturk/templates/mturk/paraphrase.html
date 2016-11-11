@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>title</title>
+  <style type="text/css">
+  	body, .main-window {
+  		background-color: #F3F3F3;
+  	}
+
+    body {
+        margin: 0px;
+       }
+
+  	.main-window {
+  		font-family: sans-serif;
+  		
+  		padding: 40px;
+  		max-width: 768px;
+  		margin: auto;
+  	}
+
+  	.statement {
+  		text-align: center;
+	    padding: 27px 10px;
+	    font-weight: 900;
+  	}
+
+  	#sentence-container {
+  		padding: 35px 53px;
+	    border: 1px solid #CCCCCC;
+	    border-radius: 3px;
+	    background-color: white;
+	    line-height: 1.5em;
+	    font-family: 'Georgia', serif;
+        margin: 31px 0px;
+  	}
+
+  	.rating-button {
+	    width: 50px;
+	    float: left;
+	    text-align: center;
+	}
+
+	.rating-container {
+		display: table;
+	    margin: auto;
+	    margin-top: 30px;
+	}
+
+	.rating-button label,
+	.rating-button input {
+		cursor: pointer;
+		padding: 7px 15px 23px 15px;
+	}
+
+	.rating-button input {
+		margin: 0px;
+	    width: 18px;
+	    height: 22px;
+	}
+    .rating-buttons {
+        display: flex;
+        align-items: center;
+    }
+
+    #rating-form-submit {
+        margin: auto;
+        display: table;
+        margin-top: 19px;
+        padding: 4px 28px;
+        font-weight: 700;
+    }
+  
+    #hit-counter {
+       float: right;
+       font-weight: bold;
+       color: #5f5f5f;
+    } 
+
+    #preview{
+        background-color: #eed7c0;
+        padding: 18px 32px;
+        margin-bottom: 24px;
+    }
+
+    #temple-header img {
+        height: 45px;
+        float: left;
+    }
+
+    #temple-header {
+        border-bottom: 1px solid #c9c9c9;
+        padding: 7px 12px;
+        background-color: white;
+        width: 100%;
+        display: flex;
+        align-items: center;
+    }
+
+    #dev-notice {
+        font-family: sans-serif;
+        font-size: 18px;
+        padding: 5px 5px;
+        margin-left: 21px;
+    }
+
+    #bottom-sentence-container {
+        margin-top: 15px;
+        border-top: 1px solid #b4b4b4;
+        padding-top: 15px;
+    }
+
+    #bottom-container{
+        width: 100%;
+        display: table;
+    }
+
+    #user-input-container{
+        width: 50%;
+        float: left;
+    }
+
+    #user-input{
+        float: left;
+        width: 100%;
+        height: 102px;
+    }
+
+    #rtt-container {
+        width: 43%;
+        border: 1px solid gray;
+        background-color: white;
+        margin: 0px 26px;
+        height: 106px;
+        float: left;
+    }
+    
+    #rtt-submit {
+        float: left;
+    }
+  </style>
+  </head>
+  <body>
+     <div id="temple-header">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/3/32/Temple_University_logo.png">
+            {% if in_dev %}
+            <div id="dev-notice">
+                <strong>DEVELOPMENT</strong>
+            </div>
+            {% endif %}
+     </div>
+     <div class="main-window">
+      {% if assignment_id == "ASSIGNMENT_ID_NOT_AVAILABLE" %}
+      <div id="preview">
+          Thank you for your interest in completing our HIT. Below you can find an example of a single question included in our HIT. <strong>Please note that one HIT contains 50 such questions.</strong> 
+    </div>
+      {% endif %}
+        <div class="description">
+  	Rewrite the sentence on the top in the bottom left box by paraphrasing it. Then click submit to get a round trip translation of the text on the right.
+    Repeat the process until the Round Trip Translation is adequately represents the meaning of the top sentence. 
+        <div id="hit-counter">0/100</div>
+    </div>
+    <div id="sentence-container">
+    </div>
+    
+    <div id="bottom-container">
+        <div id="user-input-container">
+            Your Paraphrase
+            <input type="text" id="user-input">
+            <input id="rtt-submit" type="submit" value="Submit"> 
+        </div>
+
+        Round Trip Translation:
+        <div id="rtt-container">
+        </div>
+    </div>
+
+  </div>
+  
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
+  <script type="text/javascript">
+   function autorun()
+   {
+       var maxCount = 50;
+       $('#hit-counter').data("count", 0);
+       var count = $("#hit-counter").data("count") ;
+       $("#hit-counter").html((count + 1) +" of " + maxCount);
+
+       // array to store the survey answers
+       var answerData = [];
+        
+       // assign context to serverside object
+       var context = {
+            worker_id : "{{ worker_id }}",
+            assignment_id : "{{ assignment_id }}",
+            amazon_host : "{{ amazon_host }}",
+            hit_id : "{{ hit_id }}",
+       };
+
+       if( context.assignment_id == "ASSIGNMENT_ID_NOT_AVAILABLE") {
+           $.get("https://mturk.adeutry.info/adequacy_1/get_trans", function (res) {
+               $("#top-sentence-container").html(res);
+           });
+       } else {
+           $.getJSON("https://mturk.adeutry.info/adequacy_1/get_hit_questions", function (res){
+               var ques = res.pop()
+               $("#sentence-container").html(ques.original)
+           });
+       }
+
+       // initialize timer values for per-hit time and total Hit time
+       $('#rating-form').data("timer-start", Date.now());
+       $('#rating-form').data("hit-start-time", Date.now());
+
+       $("#rtt-submit").click(function(e) {
+               e.preventDefault();
+               console.log("submitting!!!");
+               var userText = $("#user-input").val();
+               $.get("https://mturk.adeutry.info/paraphrase_1/get_rtt", { text : userText }, function(res) {
+                    $("#rtt-container").html(res);
+                   });
+           });
+         
+   }
+   if (window.addEventListener) window.addEventListener("load", autorun, false);
+   else if (window.attachEvent) window.attachEvent("onload", autorun);
+   else window.onload = autorun;
+  </script>
+  </body>
+</html>

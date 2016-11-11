@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import Sentence, Translation
+from ..models import Sentence, Translation
 import pdb, random, json
+import logging
 
 SUBMIT_URL_DEV =  "https://workersandbox.mturk.com/mturk/externalSubmit"
 SUBMIT_URL_PROD = "https://www.mturk.com/mturk/externalSubmit"
@@ -27,7 +28,7 @@ def index(request):
     else:
         context['amazon_host'] = SUBMIT_URL_PROD
 
-    res = render(request, 'mturk/fluency.html', context)
+    res = render(request, 'mturk/adequacy.html', context)
     res['x-frame-options'] = 'do you like memes?'
     return res 
 
@@ -52,18 +53,29 @@ def get_hit_questions(request):
     '''
     import nltk
 
+    logger = logging.getLogger("mturk")
+
     questions = list()
 
-    #pick 35 random translations that can still be used
+    #pick 40 random translations that can still be used
     all_trans = list(Translation.objects.all().exclude(use_count=0))
-    trans = random.sample(all_trans, 35)
+    trans = random.sample(all_trans, 40)
+
 
     #decrement their use counts
     for t in trans:
-        q = { 'text': t.trans_text, 'trans_id': t.id , 'q_type': '0'}
+        q = { 'original': t.text,
+              'trans_text' : t.trans_text,
+              'trans_id': t.id ,
+              'q_type': '0'}
         questions.append(q)
         t.use_count -= 1
         t.save()
+
+    # log the questions
+    log_string = "adequacy questions\n"
+    log_string += json.dumps(questions)
+    logger.debug(log_string)
 
     #5 bad references
     # create bad references by randomly removing words
@@ -77,20 +89,19 @@ def get_hit_questions(request):
             for i in sorted(rand_ind, reverse=True):
                 del t_tokens[i]
             trans_text = ' '.join(t_tokens)
-            q = { 'text': trans_text, 'trans_id': t.id, 'q_type': '1' }
+            q = { 'trans_text': trans_text,
+                  'trans_id': t.id,
+                  'q_type': '1',
+                  'original' : t.text}
             questions.append(q)
-        
-
-    #5 good references
-    good_trans = random.sample(all_trans, 5)
-    for t in good_trans: 
-        q = { 'text': t.text, 'trans_id': t.id, 'q_type': '2' }
-        questions.append(q)
-
+    
     #5 repeats
     repeat_trans = random.sample(trans, 5)
     for t in repeat_trans:
-        q = { 'text': t.trans_text, 'trans_id': t.id, 'q_type': '3' }
+        q = { 'trans_text': t.trans_text,
+              'trans_id': t.id,
+              'q_type': '3',
+              'original': t.text}
         questions.append(q)
 
     random.shuffle(questions)
