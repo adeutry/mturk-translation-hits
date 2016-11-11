@@ -16,6 +16,7 @@ class Translation(models.Model):
     trans_text = models.CharField(max_length=1000)
     trans_lang = models.CharField(max_length=10)
     use_count = models.IntegerField(default=0)
+    group = models.IntegerField(default=0)
 
 def save_sents_to_db():
     with open("/root/python/newsela/data/pickles/aligned_sents_filtered.pick", "rb") as f:

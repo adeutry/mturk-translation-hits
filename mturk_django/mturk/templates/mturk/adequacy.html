@@ -197,6 +197,7 @@
        if( context.assignment_id == "ASSIGNMENT_ID_NOT_AVAILABLE") {
            $.get("https://mturk.adeutry.info/adequacy_1/get_trans", function (res) {
                $("#top-sentence-container").html(res);
+               $("#bottom-sentence-container").html(res);
            });
        } else {
            $.getJSON("https://mturk.adeutry.info/adequacy_1/get_hit_questions", function (res){

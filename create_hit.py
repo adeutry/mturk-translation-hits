@@ -11,7 +11,7 @@ AMAZON_SECRET_ACCESS_KEY = "SGb51oZlVFpMCfIIzAiD5UGbjYs2hPES1FJi1fxo"
 fluency_hit_info = {
         'title' : 'Evaluate Translation Fluency',
         'description' : 'Evaluate how fluently a Machine translation is composed.',
-        'keyword' : ["language", "translation"],
+        'keywords' : ["language", "translation"],
         'frame_height' : 650,
         'amount' : 0.35,
         'prod_url' :  "https://mturk.adeutry.info/fluency_1",
@@ -21,7 +21,7 @@ fluency_hit_info = {
 adequacy_hit_info = {
         'title' : 'Evaluate Translation Adequacy',
         'description' : 'Evaluate how adequate a translation is compared to the original.',
-        'keyword' : ["language", "translation"],
+        'keywords' : ["language", "translation"],
         'frame_height' : 650,
         'amount' : 0.50,
         'prod_url' : "https://mturk.adeutry.info/adequacy_1",
@@ -38,16 +38,18 @@ elif hit_type == "adequacy":
 
 if env == "prod":
     amazon_url = AMAZON_HOST 
+    hit_url = hit_info['prod_url']
 elif env == "dev": 
     amazon_url = AMAZON_HOST_DEV
+    hit_url = hit_info['dev_url']
 
-question_form = ExternalQuestion(hit_url, frame_height)
+question_form = ExternalQuestion(hit_url, hit_info['frame_height'])
 
 conn = MTurkConnection(aws_access_key_id=AMAZON_ACCESS_KEY_ID,
                        aws_secret_access_key=AMAZON_SECRET_ACCESS_KEY,
                        host=amazon_url)
 
-for i in range(3):
+for i in range(1):
         create_hit_result = conn.create_hit(
                 title = hit_info['title'],
                 description = hit_info['description'],
