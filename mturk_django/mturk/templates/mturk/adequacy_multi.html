@@ -130,12 +130,12 @@
      <div class="main-window">
       {% if assignment_id == "ASSIGNMENT_ID_NOT_AVAILABLE" %}
       <div id="preview">
-          Thank you for your interest in completing our HIT. Below you can find an example of a single question included in our HIT. <strong>Please note that one HIT contains 50 such questions.</strong> 
+          Thank you for your interest in completing our HIT. Below you can find an example of a single question. <strong>Please note that one HIT contains 50 such questions.</strong> 
       </div>
       {% endif %}
         <div class="description">
   	Below you will find a single sentence followed by several candidate translations of the sentence. 
-    For each of the candidate sentences use the scale below each sentence to indicate how much you agree with the following statement:
+    For each of the candidate sentences, use the scale below each sentence to indicate how much you agree with the following statement:
 
         <div id="hit-counter">0/100</div>
   		<div class="statement">
@@ -326,7 +326,7 @@
                   var currentQues = $("#rating-form").data("currentQues")
                   var trans = currentQues['trans']
                   var answer = {
-                      'original' : currentQues['original'],
+                      'original_id' : trans[0]['trans_id'],
                       'trans' : [
                           {
                               'trans_id' : trans[0]['trans_id'],

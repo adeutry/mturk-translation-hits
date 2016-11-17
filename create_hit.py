@@ -17,8 +17,7 @@ hit_infos = {
             'amount' : 0.35,
             'prod_url' :  "https://mturk.adeutry.info/fluency_1",
             'dev_url' : "https://mturk.adeutry.info/fluency_1?dev=True"
-    }
-
+    },
     'adequacy' : {
             'title' : 'Evaluate Translation Adequacy',
             'description' : 'Evaluate how adequate a translation is compared to the original.',
@@ -27,13 +26,13 @@ hit_infos = {
             'amount' : 0.50,
             'prod_url' : "https://mturk.adeutry.info/adequacy_1",
             'dev_url' : "https://mturk.adeutry.info/adequacy_1?dev=True"
-    }
+    },
     'adequacy_multi' : {
             'title' : 'Evaluate Translation Adequacy',
             'description' : 'Evaluate how adequate a translation is compared to the original.',
             'keywords' : ["language", "translation"],
             'frame_height' : 1100,
-            'amount' : 0.50,
+            'amount' : 0.35,
             'prod_url' : "https://mturk.adeutry.info/adequacy_multi",
             'dev_url' : "https://mturk.adeutry.info/adequacy_multi?dev=True"
     }
@@ -57,12 +56,12 @@ conn = MTurkConnection(aws_access_key_id=AMAZON_ACCESS_KEY_ID,
                        aws_secret_access_key=AMAZON_SECRET_ACCESS_KEY,
                        host=amazon_url)
 
-for i in range(1):
+for i in range(5):
         create_hit_result = conn.create_hit(
                 title = hit_info['title'],
                 description = hit_info['description'],
                 keywords = hit_info['keywords'],
-                max_assignments = 3,
+                max_assignments = 5,
                 question = question_form,
                 reward = Price(amount=hit_info['amount'])
                 )
