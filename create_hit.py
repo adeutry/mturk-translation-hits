@@ -8,33 +8,41 @@ AMAZON_HOST_DEV = "mechanicalturk.sandbox.amazonaws.com"
 AMAZON_ACCESS_KEY_ID = "AKIAJYJ3K46RLMO6KA5Q"
 AMAZON_SECRET_ACCESS_KEY = "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"
 
-fluency_hit_info = {
-        'title' : 'Evaluate Translation Fluency',
-        'description' : 'Evaluate how fluently a Machine translation is composed.',
-        'keywords' : ["language", "translation"],
-        'frame_height' : 650,
-        'amount' : 0.35,
-        'prod_url' :  "https://mturk.adeutry.info/fluency_1",
-        'dev_url' : "https://mturk.adeutry.info/fluency_1?dev=True"
-        }
+hit_infos = {
+    'fluency' : {
+            'title' : 'Evaluate Translation Fluency',
+            'description' : 'Evaluate how fluently a Machine translation is composed.',
+            'keywords' : ["language", "translation"],
+            'frame_height' : 650,
+            'amount' : 0.35,
+            'prod_url' :  "https://mturk.adeutry.info/fluency_1",
+            'dev_url' : "https://mturk.adeutry.info/fluency_1?dev=True"
+    }
 
-adequacy_hit_info = {
-        'title' : 'Evaluate Translation Adequacy',
-        'description' : 'Evaluate how adequate a translation is compared to the original.',
-        'keywords' : ["language", "translation"],
-        'frame_height' : 650,
-        'amount' : 0.50,
-        'prod_url' : "https://mturk.adeutry.info/adequacy_1",
-        'dev_url' : "https://mturk.adeutry.info/adequacy_1?dev=True"
-        }
+    'adequacy' : {
+            'title' : 'Evaluate Translation Adequacy',
+            'description' : 'Evaluate how adequate a translation is compared to the original.',
+            'keywords' : ["language", "translation"],
+            'frame_height' : 650,
+            'amount' : 0.50,
+            'prod_url' : "https://mturk.adeutry.info/adequacy_1",
+            'dev_url' : "https://mturk.adeutry.info/adequacy_1?dev=True"
+    }
+    'adequacy_multi' : {
+            'title' : 'Evaluate Translation Adequacy',
+            'description' : 'Evaluate how adequate a translation is compared to the original.',
+            'keywords' : ["language", "translation"],
+            'frame_height' : 1100,
+            'amount' : 0.50,
+            'prod_url' : "https://mturk.adeutry.info/adequacy_multi",
+            'dev_url' : "https://mturk.adeutry.info/adequacy_multi?dev=True"
+    }
+}
 
 hit_type = sys.argv[1]
 env = sys.argv[2]
 
-if hit_type == "fluency":
-    hit_info = fluency_hit_info
-elif hit_type == "adequacy":
-    hit_info = adequacy_hit_info
+hit_info = hit_infos[hit_type]
 
 if env == "prod":
     amazon_url = AMAZON_HOST 
