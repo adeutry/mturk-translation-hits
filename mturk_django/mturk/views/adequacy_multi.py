@@ -33,7 +33,7 @@ def index(request):
     else:
         context['amazon_host'] = SUBMIT_URL_PROD
 
-    res = render(request, 'mturk/adequacy.html', context)
+    res = render(request, 'mturk/adequacy_multi.html', context)
     res['x-frame-options'] = 'do you like memes?'
     return res 
 
