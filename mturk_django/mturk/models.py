@@ -18,6 +18,19 @@ class Translation(models.Model):
     use_count = models.IntegerField(default=0)
     group = models.IntegerField(default=0)
 
+    def to_json(self):
+        '''
+        Returns a JSON representation of this objects to be used
+        on the client side.
+        '''
+        q = {
+                'original' : self.text,
+                'trans_text' : self.trans_text,
+                'trans_id' : self.id
+                }
+        return q
+
+
 def save_sents_to_db():
     with open("/root/python/newsela/data/pickles/aligned_sents_filtered.pick", "rb") as f:
         sents = pickle.load(f)
