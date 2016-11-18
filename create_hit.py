@@ -32,7 +32,7 @@ hit_infos = {
             'description' : 'Evaluate how adequate a translation is compared to the original.',
             'keywords' : ["language", "translation"],
             'frame_height' : 1100,
-            'amount' : 0.35,
+            'amount' : 0.03,
             'prod_url' : "https://mturk.adeutry.info/adequacy_multi",
             'dev_url' : "https://mturk.adeutry.info/adequacy_multi?dev=True"
     }
@@ -56,12 +56,12 @@ conn = MTurkConnection(aws_access_key_id=AMAZON_ACCESS_KEY_ID,
                        aws_secret_access_key=AMAZON_SECRET_ACCESS_KEY,
                        host=amazon_url)
 
-for i in range(5):
+for i in range(20):
         create_hit_result = conn.create_hit(
                 title = hit_info['title'],
                 description = hit_info['description'],
                 keywords = hit_info['keywords'],
-                max_assignments = 5,
+                max_assignments = 20,
                 question = question_form,
                 reward = Price(amount=hit_info['amount'])
                 )

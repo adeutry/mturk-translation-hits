@@ -8,9 +8,9 @@ SUBMIT_URL_DEV =  "https://workersandbox.mturk.com/mturk/externalSubmit"
 SUBMIT_URL_PROD = "https://www.mturk.com/mturk/externalSubmit"
 CURRENT_TRANS_GROUP = 2
 CURRENT_TRANS_LANG = "chi"
-NUM_GENUINE = 12
+NUM_GENUINE = 1
 NUM_REPEAT = 3
-NUM_GOOD_REFS = 5
+PROB_GOOD_REF = 0.10
 
 def index(request):
     
@@ -100,14 +100,11 @@ def get_hit_questions(request):
     log_string = "adequacy-multi questions\n"
     log_string += json.dumps(questions)
     logger.debug(log_string)
-    
-    # repeats
-    repeats = random.sample(questions, NUM_REPEAT)
-    questions.extend(repeats)
 
     # good references
-    for t in random.sample(trans, NUM_GOOD_REFS):
-        t['type'] = 1
-        t['trans_text'] = t['original_12th']
+    for t in trans:
+        if random.random() < PROB_GOOD_REF:
+            t['type'] = 1
+            t['trans_text'] = t['original_12th']
 
     return HttpResponse(json.dumps(questions))
