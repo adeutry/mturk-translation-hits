@@ -34,7 +34,7 @@ def index(request):
 
 def get_rtt(request):
     text = request.GET.get("text", "None")
-    from ..utils import utils
+    import utils.utils
     rtt = utils.rtt(text, "de")
     return HttpResponse(rtt)
 
