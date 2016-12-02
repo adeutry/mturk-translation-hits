@@ -28,7 +28,6 @@
 
   	#sentence-container {
   		padding: 35px 53px;
-	    border: 1px solid #CCCCCC;
 	    border-radius: 3px;
 	    background-color: white;
 	    line-height: 1.5em;
@@ -113,32 +112,46 @@
 
     #bottom-container{
         width: 100%;
-        display: table;
+        display: flex;
+        align-items: strech;
     }
 
     #user-input-container{
-        width: 50%;
-        float: left;
-    }
-
-    #user-input{
-        float: left;
-        width: 100%;
-        height: 102px;
+        flex-grow: 1;
     }
 
     #rtt-container {
-        width: 43%;
-        border: 1px solid gray;
+        flex-grow: 1;
+    }
+
+    #rtt-container-text {
+        width: 100%;
         background-color: white;
-        margin: 0px 26px;
-        height: 106px;
         float: left;
+        min-height: 153px;
+    }
+
+    #user-input-wrapper{
+        width: 95%;
+        min-height: 153px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    #user-input {
+        flex-grow: 1;
+        resize: none;
+    }
+
+    .cute-border{
+        border: 1px solid #CCCCCC;
+    }
+
+    #user-input-label, #rtt-container-label {
+        margin-bottom: 10px;
     }
     
-    #rtt-submit {
-        float: left;
-    }
+  
   </style>
   </head>
   <body>
@@ -161,18 +174,21 @@
     Repeat the process until the Round Trip Translation is adequately represents the meaning of the top sentence. 
         <div id="hit-counter">0/100</div>
     </div>
-    <div id="sentence-container">
+    <div id="sentence-container" class="cute-border">
     </div>
     
     <div id="bottom-container">
         <div id="user-input-container">
-            Your Paraphrase
-            <input type="text" id="user-input">
+            <div id="user-input-label">Your Paraphrase</div>
+            <div id="user-input-wrapper">
+                <textarea id="user-input" class="cute-border">Enter Text</textarea>
+            </div>
             <input id="rtt-submit" type="submit" value="Submit"> 
         </div>
-
-        Round Trip Translation:
-        <div id="rtt-container">
+        <div id="rtt-container">    
+            <div id="rtt-container-label">Round Trip Translation:</div>
+            <textarea id="rtt-container-text" class="cute-border"></textarea>
+            </div>
         </div>
     </div>
 
@@ -218,7 +234,7 @@
                console.log("submitting!!!");
                var userText = $("#user-input").val();
                $.get("https://mturk.adeutry.info/paraphrase_1/get_rtt", { text : userText }, function(res) {
-                    $("#rtt-container").html(res);
+                    $("#rtt-container-text").html(res);
                    });
            });
          
