@@ -19,5 +19,6 @@ urlpatterns = [
         url(r'^adequacy_multi$', adequacy_multi.index, name='index'),
         url(r'^adequacy_multi/get_hit_questions$', adequacy_multi.get_hit_questions, name='get_hit_questions'),
         url(r'^paraphrase_1$', paraphrase.index, name='index'),
-        url(r'^paraphrase_1/get_rtt$', paraphrase.get_rtt, name='get_rtt')
+        url(r'^paraphrase_1/get_rtt$', paraphrase.get_rtt, name='get_rtt'),
+        url(r'^paraphrase_1/get_paraphrase_sents$', paraphrase.get_paraphrase_sents, name='get_paraphrase_sents')
         ]
