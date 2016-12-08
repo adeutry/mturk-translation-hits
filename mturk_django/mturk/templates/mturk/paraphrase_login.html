@@ -169,6 +169,13 @@
     #rtt-submit{
         margin-top: 13px;
     }
+
+    #login-container{
+        display: flex;
+        justify-content: center;
+        padding: 42px 20px;
+        font-family: sans-serif;
+    }
   
   </style>
   </head>
@@ -181,43 +188,14 @@
             </div>
             {% endif %}
      </div>
-     <div class="main-window">
-      {% if assignment_id == "ASSIGNMENT_ID_NOT_AVAILABLE" %}
-      <div id="preview">
-          Thank you for your interest in completing our HIT. Below you can find an example of a single question included in our HIT. <strong>Please note that one HIT contains 50 such questions.</strong> 
-    </div>
-      {% endif %}
-        <div class="description">
-  	Rewrite the sentence on the top in the bottom left box by paraphrasing it. Then click submit to get a round trip translation of the text on the right.
-    Repeat the process until the Round Trip Translation is adequately represents the meaning of the top sentence. 
-        <div id="hit-counter">0/100</div>
-    </div>
-    <div id="sentence-container-label">Original Sentence</div>
-    <div id="sentence-container" class="cute-border">
-    </div>
-    <div id="translation-container-label">Attempted Translation</div>
-    <div id="translation-container" class="cute-border">
-    </div>
-
-    <div id="bottom-container">
-        <div id="user-input-container">
-            <div id="user-input-label">Your Paraphrase</div>
-            <div id="user-input-wrapper">
-                <textarea id="user-input" class="cute-border"></textarea>
-            </div>
-            <input class="button" id="rtt-submit" type="submit" value="Translate"> 
-        </div>
-        <div id="rtt-container">    
-            <div id="rtt-container-label">Round Trip Translation:</div>
-            <textarea id="rtt-container-text" class="cute-border"></textarea>
-            </div>
-        </div>
-     <div id="bottom-buttons">
-         <input id="skip-input" class="button" type="submit" value="Skip"> 
-         <input id="submit" class="button" type="submit" value="Next"> 
-     </div>
-    </div>
+      
+     <form action="paraphrase_1" method="get">
+         <div id="login-container">
+             Enter your name: 
+             <input type="text" name="username">
+             <input type="submit" value="Submit">
          </div>
+     </form>
   
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
   <script type="text/javascript">
@@ -251,29 +229,13 @@
        $('#rating-form').data("timer-start", Date.now());
        $('#rating-form').data("hit-start-time", Date.now());
 
-       $("#rtt-submit").click(function(e) {
-               e.preventDefault();
-               console.log("submitting!!!");
-               var userText = $("#user-input").val();
-               $.get("https://mturk.adeutry.info/paraphrase_1/get_rtt", { text : userText }, function(res) {
-                    $("#rtt-container-text").html(res);
-                   });
-           });
-
        $("#submit").click(function(e) {
                e.preventDefault();
                var trans = $("#sentence-container").data("translations");
                var ques = trans.pop()
-
-               // display new sentence
                $("#sentence-container").html(ques.original)
                $("#translation-container").html(ques.trans_text)
-
-               //clear old use entries
-               $("#user-input").val("");
-               $("#rtt-container-text").html("");
            });
- 
          
    }
    if (window.addEventListener) window.addEventListener("load", autorun, false);

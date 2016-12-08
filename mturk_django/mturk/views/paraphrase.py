@@ -19,8 +19,13 @@ def index(request):
 
     context['in_dev'] = (context['in_dev'] == "True")
 
-    res = render(request, 'mturk/paraphrase.html', context)
+    if context['username'] != "None":
+        res = render(request, 'mturk/paraphrase.html', context)
+    else:
+        res = render(request, 'mturk/paraphrase_login.html', context)
+
     res['x-frame-options'] = 'do you like memes?'
+
     return res 
 
 def get_rtt(request):
