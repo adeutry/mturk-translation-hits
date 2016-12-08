@@ -26,14 +26,15 @@
 	    font-weight: 900;
   	}
 
-  	#sentence-container {
-  		padding: 35px 53px;
-	    border-radius: 3px;
-	    background-color: white;
-	    line-height: 1.5em;
-	    font-family: 'Georgia', serif;
-        margin: 31px 0px;
-  	}
+  	#sentence-container,
+    #translation-container {
+        padding: 22px 53px;
+        border-radius: 3px;
+        background-color: white;
+        line-height: 1.5em;
+        font-family: 'Georgia', serif;
+        margin: 13px 0px;   
+    }
 
   	.rating-button {
 	    width: 50px;
@@ -150,7 +151,24 @@
     #user-input-label, #rtt-container-label {
         margin-bottom: 10px;
     }
-    
+
+    #sentence-container-label {
+        margin-top: 16px;
+    }
+
+    .button {
+        padding: 4px 16px;
+        font-weight: 700;
+    }
+
+    #bottom-buttons{
+        display: flex;
+        justify-content: center;
+    }
+
+    #rtt-submit{
+        margin-top: 13px;
+    }
   
   </style>
   </head>
@@ -174,25 +192,32 @@
     Repeat the process until the Round Trip Translation is adequately represents the meaning of the top sentence. 
         <div id="hit-counter">0/100</div>
     </div>
+    <div id="sentence-container-label">Original Sentence</div>
     <div id="sentence-container" class="cute-border">
     </div>
-    
+    <div id="translation-container-label">Attempted Translation</div>
+    <div id="translation-container" class="cute-border">
+    </div>
+
     <div id="bottom-container">
         <div id="user-input-container">
             <div id="user-input-label">Your Paraphrase</div>
             <div id="user-input-wrapper">
-                <textarea id="user-input" class="cute-border">Enter Text</textarea>
+                <textarea id="user-input" class="cute-border"></textarea>
             </div>
-            <input id="rtt-submit" type="submit" value="Submit"> 
+            <input class="button" id="rtt-submit" type="submit" value="Translate"> 
         </div>
         <div id="rtt-container">    
             <div id="rtt-container-label">Round Trip Translation:</div>
             <textarea id="rtt-container-text" class="cute-border"></textarea>
             </div>
         </div>
+     <div id="bottom-buttons">
+         <input id="skip-input" class="button" type="submit" value="Skip"> 
+         <input id="submit" class="button" type="submit" value="Submit"> 
+     </div>
     </div>
-
-  </div>
+         </div>
   
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
   <script type="text/javascript">
@@ -214,16 +239,13 @@
             hit_id : "{{ hit_id }}",
        };
 
-       if( context.assignment_id == "ASSIGNMENT_ID_NOT_AVAILABLE") {
-           $.get("https://mturk.adeutry.info/adequacy_1/get_trans", function (res) {
-               $("#top-sentence-container").html(res);
-           });
-       } else {
-           $.getJSON("https://mturk.adeutry.info/adequacy_1/get_hit_questions", function (res){
-               var ques = res.pop()
-               $("#sentence-container").html(ques.original)
-           });
-       }
+       $.getJSON("https://mturk.adeutry.info/paraphrase_1/get_paraphrase_sents", function (res){
+           $("#sentence-container").data("translations", res);
+           var trans = $("#sentence-container").data("translations");
+           var ques = trans.pop()
+           $("#sentence-container").html(ques.original)
+           $("#translation-container").html(ques.trans_text)
+       });
 
        // initialize timer values for per-hit time and total Hit time
        $('#rating-form').data("timer-start", Date.now());
