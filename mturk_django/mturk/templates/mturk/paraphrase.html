@@ -173,6 +173,7 @@
   </style>
   </head>
   <body>
+      {% csrf_token %}
      <div id="temple-header">
           <img src="https://upload.wikimedia.org/wikipedia/commons/3/32/Temple_University_logo.png">
             {% if in_dev %}
@@ -221,36 +222,39 @@
   
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
   <script type="text/javascript">
+   var app = {};
+
+   app.userName = "{{ username }}";
+
+   // array to store the answers
+   app.answerData = [];
+
    function autorun()
    {
-       var maxCount = 50;
-       $('#hit-counter').data("count", 0);
-       var count = $("#hit-counter").data("count") ;
-       $("#hit-counter").html((count + 1) +" of " + maxCount);
-
-       // array to store the survey answers
-       var answerData = [];
-        
-       // assign context to serverside object
-       var context = {
-            worker_id : "{{ worker_id }}",
-            assignment_id : "{{ assignment_id }}",
-            amazon_host : "{{ amazon_host }}",
-            hit_id : "{{ hit_id }}",
-       };
-
+       // get the survey questions 
        $.getJSON("https://mturk.adeutry.info/paraphrase_1/get_paraphrase_sents", function (res){
-           $("#sentence-container").data("translations", res);
-           var trans = $("#sentence-container").data("translations");
-           var ques = trans.pop()
+
+           // store the questions in our app object
+           app.questions = res;
+           var maxCount = res.length
+
+           // get our first question
+           var ques = app.questions.pop()
+           app.currentQues = ques;
            $("#sentence-container").html(ques.original)
            $("#translation-container").html(ques.trans_text)
+
+           // update counter
+           app.count = 1;
+           $("#hit-counter").html(app.count +" of " + maxCount);
+
        });
 
        // initialize timer values for per-hit time and total Hit time
        $('#rating-form').data("timer-start", Date.now());
        $('#rating-form').data("hit-start-time", Date.now());
 
+       // handle translation requests
        $("#rtt-submit").click(function(e) {
                e.preventDefault();
                console.log("submitting!!!");
@@ -260,19 +264,60 @@
                    });
            });
 
+       // handle skipping a question
+       $("#skip-input").click(function(e) {
+               e.preventDefault();
+
+               if(app.questions.length == 0){
+                    submitAnswers();
+                }else{
+                   // display new sentence
+                   var ques = app.questions.pop()
+                   $("#sentence-container").html(ques.original)
+                   $("#translation-container").html(ques.trans_text)
+
+                   //clear old use entries
+                   $("#user-input").val("");
+                   $("#rtt-container-text").html("");
+
+                   //update count
+                   app.count++
+                   $("#hit-counter").html(app.count +" of " + maxCount);
+               }
+       });
+
+       // handle submitting the question
        $("#submit").click(function(e) {
                e.preventDefault();
-               var trans = $("#sentence-container").data("translations");
-               var ques = trans.pop()
 
-               // display new sentence
-               $("#sentence-container").html(ques.original)
-               $("#translation-container").html(ques.trans_text)
+               // add answer to answer data
+               app.currentQues.paraphrase = $("#user-input").val();
+               app.currentQues.paraphraseTranslation = $("#rtt-container-text").val();
+               app.answerData.push(app.currentQues);
 
-               //clear old use entries
-               $("#user-input").val("");
-               $("#rtt-container-text").html("");
-           });
+               if(app.questions.length == 0){
+                    submitAnswers();
+                }else{
+                   // display new sentence
+                   var ques = app.questions.pop()
+                   $("#sentence-container").html(ques.original)
+                   $("#translation-container").html(ques.trans_text)
+
+                   //clear old use entries
+                   $("#user-input").val("");
+                   $("#rtt-container-text").html("");
+
+                    //update count
+                   app.count++
+                   $("#hit-counter").html(app.count +" of " + maxCount);
+
+               }
+       });
+       
+       var submitAnswers = function() {
+           var answerDataJson = JSON.stringify(app.answerData);
+           $.post("/paraphrase_1/submit_answer_data", {answerData : answerDataJson});
+       }
  
          
    }

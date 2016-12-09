@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from ..models import Sentence, Translation
+from ..models import Sentence, Translation, Paraphrase
 import pdb, random, json
 import logging
 
@@ -47,6 +47,18 @@ def get_paraphrase_sents(request):
     # shuffle the translations
     random.shuffle(trans_json)
 
-    return HttpResponse(json.dumps(trans_json))
+    return HttpResponse(json.dumps(trans_json[:5]))
 
 
+def store_answer_data(request):
+    answer_data_json = request.POST.get("answerData", "None");
+    answer_data = json.loads(answer_data_json)
+    for answer in answer_data:
+        paraphrase = Paraphrase(
+            original_text = answer.original,
+            paraphrase_text= answer.paraphrase,
+            trans_id = answer.trans_id
+            )
+        paraphrase.save()
+
+    
