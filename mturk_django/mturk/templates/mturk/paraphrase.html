@@ -236,7 +236,7 @@
 
            // store the questions in our app object
            app.questions = res;
-           var maxCount = res.length
+           app.maxCount = res.length
 
            // get our first question
            var ques = app.questions.pop()
@@ -246,13 +246,32 @@
 
            // update counter
            app.count = 1;
-           $("#hit-counter").html(app.count +" of " + maxCount);
+           $("#hit-counter").html(app.count +" of " + app.maxCount);
 
        });
 
        // initialize timer values for per-hit time and total Hit time
        $('#rating-form').data("timer-start", Date.now());
        $('#rating-form').data("hit-start-time", Date.now());
+
+       // function to display new question
+       app.getNextQuestion = function() {
+           
+           // display new sentence
+           var ques = app.questions.pop()
+           app.currentQues = ques;
+           $("#sentence-container").html(ques.original)
+           $("#translation-container").html(ques.trans_text)
+
+           //clear old use entries
+           $("#user-input").val("");
+           $("#rtt-container-text").html("");
+
+           //update count
+           app.count++
+           $("#hit-counter").html(app.count +" of " + app.maxCount);
+
+       };
 
        // handle translation requests
        $("#rtt-submit").click(function(e) {
@@ -271,19 +290,8 @@
                if(app.questions.length == 0){
                     submitAnswers();
                 }else{
-                   // display new sentence
-                   var ques = app.questions.pop()
-                   $("#sentence-container").html(ques.original)
-                   $("#translation-container").html(ques.trans_text)
-
-                   //clear old use entries
-                   $("#user-input").val("");
-                   $("#rtt-container-text").html("");
-
-                   //update count
-                   app.count++
-                   $("#hit-counter").html(app.count +" of " + maxCount);
-               }
+                    app.getNextQuestion();
+                }
        });
 
        // handle submitting the question
@@ -293,24 +301,16 @@
                // add answer to answer data
                app.currentQues.paraphrase = $("#user-input").val();
                app.currentQues.paraphraseTranslation = $("#rtt-container-text").val();
-               app.answerData.push(app.currentQues);
+
+               // oh boy how do we do a deep copy in JS? 
+               // apparently like this because reasons
+               var currentQuesCopy = JSON.parse(JSON.stringify(app.currentQues));
+               app.answerData.push(currentQuesCopy);
 
                if(app.questions.length == 0){
                     submitAnswers();
                 }else{
-                   // display new sentence
-                   var ques = app.questions.pop()
-                   $("#sentence-container").html(ques.original)
-                   $("#translation-container").html(ques.trans_text)
-
-                   //clear old use entries
-                   $("#user-input").val("");
-                   $("#rtt-container-text").html("");
-
-                    //update count
-                   app.count++
-                   $("#hit-counter").html(app.count +" of " + maxCount);
-
+                    app.getNextQuestion();
                }
        });
        

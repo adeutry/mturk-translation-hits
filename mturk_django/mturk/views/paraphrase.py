@@ -4,9 +4,6 @@ from ..models import Sentence, Translation, Paraphrase
 import pdb, random, json
 import logging
 
-SUBMIT_URL_DEV =  "https://workersandbox.mturk.com/mturk/externalSubmit"
-SUBMIT_URL_PROD = "https://www.mturk.com/mturk/externalSubmit"
-
 def index(request):
     
     # prepare the context
@@ -49,13 +46,15 @@ def get_paraphrase_sents(request):
 
 
 def store_answer_data(request):
+    logger = logging.getLogger('mturk')
     answer_data_json = request.POST.get("answerData", "None")
     answer_username = request.POST.get("username", "None")
     answer_data = json.loads(answer_data_json)
+    logger.debug(answer_data_json)
     for answer in answer_data:
         paraphrase = Paraphrase(
             original_text = answer['original'],
-            paraphrase_text= answer['paraphrase'],
+            paraphrase_text = answer['paraphrase'],
             trans_id = answer['trans_id'],
             username = answer_username
             )
