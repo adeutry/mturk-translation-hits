@@ -316,7 +316,14 @@
        
        var submitAnswers = function() {
            var answerDataJson = JSON.stringify(app.answerData);
-           $.post("/paraphrase_1/submit_answer_data", {answerData : answerDataJson});
+
+           // retrieve the csrf token from DOM
+           var csrfToken = $("input[name=csrfmiddlewaretoken]")[0].value;
+
+           $.post("/paraphrase_1/submit_answer_data", {
+                username : app.userName,
+                answerData : answerDataJson,
+                csrfmiddlewaretoken : csrfToken});
        }
  
          

@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from ..models import Sentence, Translation, Paraphrase
 import pdb, random, json
 import logging
@@ -51,14 +51,15 @@ def get_paraphrase_sents(request):
 
 
 def store_answer_data(request):
-    answer_data_json = request.POST.get("answerData", "None");
+    answer_data_json = request.POST.get("answerData", "None")
+    answer_username = request.POST.get("username", "None")
     answer_data = json.loads(answer_data_json)
     for answer in answer_data:
         paraphrase = Paraphrase(
-            original_text = answer.original,
-            paraphrase_text= answer.paraphrase,
-            trans_id = answer.trans_id
+            original_text = answer['original'],
+            paraphrase_text= answer['paraphrase'],
+            trans_id = answer['trans_id'],
+            username = answer_username
             )
         paraphrase.save()
-
-    
+    return JsonResponse(answer_data_json, safe=False)
