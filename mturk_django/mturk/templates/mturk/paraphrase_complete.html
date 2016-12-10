@@ -7,6 +7,15 @@
     <link rel="stylesheet" type="text/css" href="{% static 'mturk/style.css' %}">
   </head>
   <body>
+    <div id="temple-header">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/3/32/Temple_University_logo.png">
+            {% if in_dev %}
+            <div id="dev-notice">
+                <strong>DEVELOPMENT</strong>
+            </div>
+            {% endif %}
+     </div>
+
       <div id="complete-message" >
           Thank you for completing the survey!
       </div>

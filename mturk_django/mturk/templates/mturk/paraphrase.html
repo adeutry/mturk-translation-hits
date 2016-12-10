@@ -323,7 +323,10 @@
            $.post("/paraphrase_1/submit_answer_data", {
                 username : app.userName,
                 answerData : answerDataJson,
-                csrfmiddlewaretoken : csrfToken});
+                csrfmiddlewaretoken : csrfToken},
+                function(){
+                    window.location = "paraphrase_1/complete";
+                });
        }
  
          
