@@ -9,8 +9,6 @@ SUBMIT_URL_PROD = "https://www.mturk.com/mturk/externalSubmit"
 
 def index(request):
     
-    sents = Sentence.objects.all()
-    sent = random.sample(list(sents), 1)[0]
     # prepare the context
     context = {
             'in_dev' : request.GET.get("dev", "None"),
@@ -63,3 +61,6 @@ def store_answer_data(request):
             )
         paraphrase.save()
     return JsonResponse(answer_data_json, safe=False)
+
+def complete(request):
+    return render(request, 'mturk/paraphrase_complete.html')

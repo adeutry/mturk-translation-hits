@@ -3,3 +3,4 @@ credentials.csv
 *.pyc
 *.swp
 mturk_django/static
+mturk_django/static/*
