@@ -30,19 +30,20 @@ def get_rtt(request):
     return HttpResponse(rtt)
 
 def get_paraphrase_sents(request):
+    # these are the worst 12th grade translations rated by turkers
+    trans_ids = [611, 811, 781, 91, 151, 241, 671, 451, 81, 801, 381, 631, 641, 791, 731]
+
     trans = Translation.objects.filter(
-        group=1
-    ).filter(
-        grade_level='12.0'
-    )
-    
+            id__in=trans_ids
+    )    
+
     # serialize translations
     trans_json = [t.to_json() for t in trans]
 
     # shuffle the translations
     random.shuffle(trans_json)
 
-    return HttpResponse(json.dumps(trans_json[:5]))
+    return HttpResponse(json.dumps(trans_json))
 
 
 def store_answer_data(request):
