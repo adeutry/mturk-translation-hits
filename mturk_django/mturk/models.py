@@ -36,6 +36,33 @@ class Paraphrase(models.Model):
     trans_id = models.IntegerField(default=-1)
     username = models.CharField(max_length=1000)
 
+    def to_translation(self):
+        '''
+        Return the translation representation of this paraphrase object.
+        This is used when we are transferring paraphrases into the 
+        translations database.
+        '''
+        from .utils import utils
+
+        # get a translation object with this trans id
+        trans_old = Translation.objects.get(pk=self.trans_id)
+
+        # rtt on paraphrase
+        para_trans = utils.rtt(self.paraphrase_text, 'de', sleep=0.0)
+        
+        trans_new = Translation(
+                text = self.paraphrase_text,
+                slug = trans_old.slug,
+                grade_level = trans_old.grade_level,
+                align_id = trans_old.align_id,
+                trans_text = para_trans,
+                trans_lang = 'de',
+                use_count = 0,
+                group = 3
+            )
+
+        return trans_new
+
 def save_sents_to_db():
     with open("/root/python/newsela/data/pickles/aligned_sents_filtered.pick", "rb") as f:
         sents = pickle.load(f)

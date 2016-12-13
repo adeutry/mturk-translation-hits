@@ -251,6 +251,40 @@
                         </div>
                 </div>
             </div>
+            <div class="candidate">
+                <div class="sentence" id="bottomer-sentence-container"></div>
+                <div id="lower-rating-container" class="rating-container">
+                        <input type="hidden" name="workerId" value="{{ worker_id }}">
+                        <input type="hidden" name="assignmentId" value="{{ assignment_id }}">
+                        <input type="hidden" name="amazon_host" value="{{ amazon_host }}">
+                        <input type="hidden" name="hitId" value="{{ hit_id }}">
+                        <div class="rating-buttons">
+                            <span style="float: left;color: #ff6161;font-weight: 600;">Strongly Disagree</span>
+                                <div class="rating-button">
+                                    <label for="lower-3">-3</label><br><input id="lower-3" type="radio" name="lower-rating" value="-3"> 
+                                </div>
+                                <div class="rating-button">
+                                    <label for="lower-2">-2</label><br><input id="lower-2" type="radio" name="lower-rating" value="-2"> 
+                                </div>
+                                <div class="rating-button">
+                                    <label for="lower-1">-1</label><br><input id="lower-1" type="radio" name="lower-rating" value="-1"> 
+                                </div>
+                                <div class="rating-button">
+                                    <label for="lower0">0</label><br><input id="lower0" type="radio" name="lower-rating" value="0"> 
+                                </div>
+                                <div class="rating-button">
+                                    <label for="lower+1">+1</label><br><input id="lower+1" type="radio" name="lower-rating" value="+1"> 
+                                </div>
+                                <div class="rating-button">
+                                    <label for="lower+2">+2</label><br><input id="lower+2" type="radio" name="lower-rating" value="+2"> 
+                                </div>
+                                <div class="rating-button">
+                                    <label for="lower+3">+3</label><br><input id="lower+3" type="radio" name="lower-rating" value="+3"> 
+                                </div>
+                                <span style="font-weight: 600;color: #46c546">Strongly Agree</span>
+                        </div>
+                </div>
+            </div>
         </div>
         <input id="rating-form-submit" type="submit" value="Next">
     </form>
@@ -295,6 +329,7 @@
            $("#top-sentence-container").html(trans[0]['trans_text']);
            $("#middle-sentence-container").html(trans[1]['trans_text']);
            $("#bottom-sentence-container").html(trans[2]['trans_text']);
+           $("#bottomer-sentence-container").html(trans[3]['trans_text']);
        });
        
        // initialize timer values for per-hit time and total Hit time
@@ -312,7 +347,7 @@
               var selectedAnswer = $(".rating-button input:checked");
 
               //check to see if the user even selected anything
-              if( selectedAnswer.length != 3 ) {
+              if( selectedAnswer.length != 4 ) {
 
                    console.log("Make a choice, silly!");
 
@@ -342,6 +377,11 @@
                               'trans_id' : trans[2]['trans_id'],
                               'answer' : $("#low-rating-container .rating-button input:checked")[0].value,
                               'type' : trans[2]['type']
+                          },
+                          {
+                              'trans_id' : trans[3]['trans_id'],
+                              'answer' : $("#lower-rating-container .rating-button input:checked")[0].value,
+                              'type' : trans[3]['type']
                           }
                       ]
                   };

@@ -6,8 +6,8 @@ import logging
 
 SUBMIT_URL_DEV =  "https://workersandbox.mturk.com/mturk/externalSubmit"
 SUBMIT_URL_PROD = "https://www.mturk.com/mturk/externalSubmit"
-CURRENT_TRANS_GROUP = 2
-CURRENT_TRANS_LANG = "chi"
+CURRENT_TRANS_GROUP = 3
+CURRENT_TRANS_LANG = "de"
 NUM_GENUINE = 1
 NUM_REPEAT = 3
 PROB_GOOD_REF = 0.10
@@ -81,11 +81,14 @@ def get_hit_questions(request):
         align_trans_by_grd = [
                 align_trans.get(grade_level='12.0').to_json(),
                 align_trans.get(grade_level='9.0').to_json(),
-                align_trans.get(grade_level='5.0').to_json()]
+                align_trans.get(grade_level='5.0').to_json(),
+                align_trans.get(grade_level='para').to_json()]
+        original_sent = align_trans_by_grd[0]['original']
+        random.shuffle(align_trans_by_grd)
         trans.extend(align_trans_by_grd)
 
         q = { 
-              'original' : align_trans_by_grd[0]['original'],
+              'original' : original_sent,
               'trans' : align_trans_by_grd }
         questions.append(q)
 
