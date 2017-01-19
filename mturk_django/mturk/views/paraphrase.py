@@ -30,9 +30,11 @@ def get_rtt(request):
     return HttpResponse(rtt)
 
 def get_paraphrase_sents(request):
+
     # these are the worst 12th grade translations rated by turkers
     trans_ids = [611, 811, 781, 91, 151, 241, 671, 451, 81, 801, 381, 631, 641, 791, 731]
 
+    # load worst translations from db
     trans = Translation.objects.filter(
             id__in=trans_ids
     )    

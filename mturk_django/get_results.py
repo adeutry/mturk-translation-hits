@@ -4,6 +4,11 @@ from boto.mturk.price import Price
 from tabulate import tabulate
 import sys, json, django
 
+'''
+This file will load HIT results for the multi_adequacy task and join them with
+objects from the Django db. Ratings are joined with their corresponding 
+translation objects.
+'''
 # setup django so it actually works
 django.setup()
 
@@ -23,15 +28,20 @@ conn = MTurkConnection(aws_access_key_id=AMAZON_ACCESS_KEY_ID,
                        host=amazon_url)
 # load the hits
 hits = list(conn.get_all_hits())
+print("retrieved a total of " + str(len(hits)) + " hits")
 assignments = list()
 results = list()
 all_answers = list()
 ratings = list()
 
+# filter hits to only the ones we are interested in
+current_hits = [h for h in hits if (not h.expired) ]
+
 # load the assignments for each hit
-for hit in [h for h in hits if not h.expired]:
+for hit in current_hits:
     hit_assigns = conn.get_assignments(hit.HITId)
     assignments.extend(hit_assigns)
+print("retrieved a total of " + str(len(assignments)) + " hit assignments")
 
 # make list of results. Each element is the result of one HIT
 for assign in assignments:
@@ -55,6 +65,7 @@ for res in results:
             'transId' : ans['trans_id']
             }
         ratings.append(rating)
+print("got " + str(len(ratings)) + " ratings")
 
 from mturk.models import Translation
 

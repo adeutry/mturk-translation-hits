@@ -31,7 +31,7 @@ hit_infos = {
             'title' : 'Evaluate Translation Adequacy',
             'description' : 'Evaluate how adequate a translation is compared to the original.',
             'keywords' : ["language", "translation"],
-            'frame_height' : 1100,
+            'frame_height' : 1500,
             'amount' : 0.03,
             'prod_url' : "https://mturk.adeutry.info/adequacy_multi",
             'dev_url' : "https://mturk.adeutry.info/adequacy_multi?dev=True"
@@ -61,7 +61,7 @@ for i in range(20):
                 title = hit_info['title'],
                 description = hit_info['description'],
                 keywords = hit_info['keywords'],
-                max_assignments = 20,
+                max_assignments = 25,
                 question = question_form,
                 reward = Price(amount=hit_info['amount'])
                 )
