@@ -91,7 +91,7 @@
 
     #temple-header {
         border-bottom: 1px solid #c9c9c9;
-        padding: 7px 12px;
+        padding: 15px 16px;
         background-color: white;
         width: 100%;
         display: flex;
@@ -231,9 +231,6 @@
 
    app.userName = "{{ username }}";
 
-   // array to store the answers
-   app.answerData = [];
-
    function autorun()
    {
        // get the survey questions 
@@ -256,8 +253,8 @@
        });
 
        // initialize timer values for per-hit time and total Hit time
-       $('#rating-form').data("timer-start", Date.now());
-       $('#rating-form').data("hit-start-time", Date.now());
+       app.sentenceTimerStart = Date.now();
+       app.totalTimerStart = Date.now();
 
        // function to display new question
        app.getNextQuestion = function() {
@@ -307,34 +304,42 @@
                app.currentQues.paraphrase = $("#user-input").val();
                app.currentQues.paraphraseTranslation = $("#rtt-container-text").val();
 
-               // oh boy how do we do a deep copy in JS? 
-               // apparently like this because reasons
-               var currentQuesCopy = JSON.parse(JSON.stringify(app.currentQues));
-               app.answerData.push(currentQuesCopy);
+               // update timer 
+               time = Date.now() - app.sentenceTimerStart;
+               app.sentenceTimerStart = Date.now();
+               app.currentQues.time = time;
 
-               if(app.questions.length == 0){
-                    submitAnswers();
-                }else{
-                    app.getNextQuestion();
-               }
+               // retrieve the csrf token from DOM (this is a Django-specific security requirement)
+               var csrfToken = $("input[name=csrfmiddlewaretoken]")[0].value;
+               
+                $.post("paraphrase_1/submit_answer", {
+                        answerData : JSON.stringify(app.currentQues),
+                        csrfmiddlewaretoken : csrfToken
+                    },
+                    function () {
+                        if (app.questions.length > 0) {
+                            app.getNextQuestion();
+                        } else {
+                            window.location = "paraphrase_1/complete";
+                        }
+
+                    });
        });
-       
-       var submitAnswers = function() {
-           var answerDataJson = JSON.stringify(app.answerData);
 
-           // retrieve the csrf token from DOM
-           var csrfToken = $("input[name=csrfmiddlewaretoken]")[0].value;
+       var submitAnswers = function() {
+
+           var answerDataJson = JSON.stringify(app.answerData);
 
            $.post("/paraphrase_1/submit_answer_data", {
                 username : app.userName,
                 answerData : answerDataJson,
-                csrfmiddlewaretoken : csrfToken},
                 function(){
                     window.location = "paraphrase_1/complete";
-                });
-       }
+                }
+           });
  
          
+       }
    }
    if (window.addEventListener) window.addEventListener("load", autorun, false);
    else if (window.attachEvent) window.attachEvent("onload", autorun);

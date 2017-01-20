@@ -15,6 +15,11 @@ def index(request):
     context['in_dev'] = (context['in_dev'] == "True")
 
     if context['username'] != "None":
+        ''' initialize the session for the user'''
+
+        # set session values
+        request.session['username'] = context['username']
+
         res = render(request, 'mturk/paraphrase.html', context)
     else:
         res = render(request, 'mturk/paraphrase_login.html', context)
@@ -49,20 +54,28 @@ def get_paraphrase_sents(request):
 
 
 def store_answer_data(request):
-    logger = logging.getLogger('mturk')
-    answer_data_json = request.POST.get("answerData", "None")
-    answer_username = request.POST.get("username", "None")
-    answer_data = json.loads(answer_data_json)
-    logger.debug(answer_data_json)
-    for answer in answer_data:
+    username = request.session.get('username', False)
+    if username:
+        # logging
+        logger = logging.getLogger('mturk')
+
+        answer_data_json = request.POST.get("answerData", "None")
+        answer = json.loads(answer_data_json)
+
+        logger.debug(answer_data_json)
+
         paraphrase = Paraphrase(
             original_text = answer['original'],
             paraphrase_text = answer['paraphrase'],
+            time = answer['time'],
             trans_id = answer['trans_id'],
-            username = answer_username
-            )
+            username = username
+        )
+
         paraphrase.save()
-    return JsonResponse(answer_data_json, safe=False)
+        return JsonResponse(answer_data_json, safe=False)
+    else:
+        return HttpResponse(status=401, reason="username not defined in session")
 
 def complete(request):
     return render(request, 'mturk/paraphrase_complete.html')
