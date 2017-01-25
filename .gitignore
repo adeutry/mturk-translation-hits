@@ -4,3 +4,6 @@ credentials.csv
 *.swp
 mturk_django/static
 mturk_django/static/*
+mturk_django/nginx.conf
+mturk_django/uwsgi.ini
+mturk_django/mturk_django/settings.py

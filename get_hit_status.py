@@ -3,12 +3,15 @@ from boto.mturk.question import ExternalQuestion
 from boto.mturk.price import Price
 from tabulate import tabulate
 import sys
+import configparser
+
+config = configparser.ConfigParser()
+config.read('config.ini')
 
 AMAZON_HOST = "mechanicalturk.amazonaws.com"
 AMAZON_HOST_DEV = "mechanicalturk.sandbox.amazonaws.com"
-AMAZON_ACCESS_KEY_ID = "AKIAJYJ3K46RLMO6KA5Q"
-AMAZON_SECRET_ACCESS_KEY = "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"
-
+AMAZON_ACCESS_KEY_ID = config['mturk']['AMAZON_ACCESS_KEY_ID']
+AMAZON_SECRET_ACCESS_KEY = config['mturk']['AMAZON_SECRET_ACCESS_KEY']
 
 HIT_URL_PROD = "https://mturk.adeutry.info/fluency_1"
 HIT_URL_DEV =  "https://mturk.adeutry.info/fluency_1?dev=True"

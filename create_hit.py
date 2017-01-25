@@ -2,11 +2,15 @@ from boto.mturk.connection import MTurkConnection
 from boto.mturk.question import ExternalQuestion
 from boto.mturk.price import Price
 import sys
+import configparser
+
+config = configparser.ConfigParser()
+config.read('config.ini')
 
 AMAZON_HOST = "mechanicalturk.amazonaws.com"
 AMAZON_HOST_DEV = "mechanicalturk.sandbox.amazonaws.com"
-AMAZON_ACCESS_KEY_ID = "AKIAJYJ3K46RLMO6KA5Q"
-AMAZON_SECRET_ACCESS_KEY = "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"
+AMAZON_ACCESS_KEY_ID = config['mturk']['AMAZON_ACCESS_KEY_ID']
+AMAZON_SECRET_ACCESS_KEY = config['mturk']['AMAZON_SECRET_ACCESS_KEY']
 
 hit_infos = {
     'fluency' : {
