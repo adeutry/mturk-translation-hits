@@ -7,3 +7,4 @@ mturk_django/static/*
 mturk_django/nginx.conf
 mturk_django/uwsgi.ini
 mturk_django/mturk_django/settings.py
+mturk_django/mturk_django/db.conf
