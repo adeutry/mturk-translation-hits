@@ -36,6 +36,7 @@ class Paraphrase(models.Model):
     trans_id = models.IntegerField(default=-1)
     username = models.CharField(max_length=1000)
     time = models.IntegerField(default=-1)
+    order = models.IntegerField( default = -1 )
 
     def to_translation(self):
         '''

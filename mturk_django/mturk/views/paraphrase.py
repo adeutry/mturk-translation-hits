@@ -69,6 +69,7 @@ def store_answer_data(request):
             paraphrase_text = answer['paraphrase'],
             time = answer['time'],
             trans_id = answer['trans_id'],
+            order  = answer['order'],
             username = username
         )
 

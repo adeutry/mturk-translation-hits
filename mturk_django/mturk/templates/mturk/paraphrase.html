@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>title</title>
+    <title>Paraphrase Task</title>
   <style type="text/css">
   	body, .main-window {
   		background-color: #F3F3F3;
@@ -10,14 +10,18 @@
 
     body {
         margin: 0px;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
        }
 
   	.main-window {
   		font-family: sans-serif;
-  		
   		padding: 40px;
-  		max-width: 768px;
   		margin: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
   	}
 
   	.statement {
@@ -26,14 +30,30 @@
 	    font-weight: 900;
   	}
 
+    .description {
+        width: 720px;
+        margin: auto;
+        display: none;
+    }
+
   	#sentence-container,
-    #translation-container {
-        padding: 22px 53px;
-        border-radius: 3px;
+    #translation-container,
+    .attempt-paraphrase,
+    .attempt-translation {
+        padding: 20px;
         background-color: white;
         line-height: 1.5em;
         font-family: 'Georgia', serif;
-        margin: 13px 0px;   
+    }
+
+    #sentence-container,
+    #translation-container {
+        margin: 13px 0px;
+        border-radius: 3px;
+    }
+
+    .paraphrase-attempt {
+        border-radius: 3px;
     }
 
   	.rating-button {
@@ -91,11 +111,14 @@
 
     #temple-header {
         border-bottom: 1px solid #c9c9c9;
-        padding: 15px 16px;
         background-color: white;
         width: 100%;
         display: flex;
         align-items: center;
+    }
+
+    #temple-header img {
+        padding: 12px;
     }
 
     #dev-notice {
@@ -114,15 +137,15 @@
     #bottom-container{
         width: 100%;
         display: flex;
-        align-items: strech;
+        justify-content: center;
+        padding-top: 25px;
+        border-top: 1px solid #cccccc;
+        margin-top: 10px;
     }
 
-    #user-input-container{
-        flex-grow: 1;
-    }
-
-    #rtt-container {
-        flex-grow: 1;
+    #user-input-container,
+    #rtt-container{
+        flex-basis: 40%;
     }
 
     #rtt-container-text {
@@ -152,10 +175,6 @@
         margin-bottom: 10px;
     }
 
-    #sentence-container-label {
-        margin-top: 16px;
-    }
-
     .button {
         padding: 4px 16px;
         font-weight: 700;
@@ -166,8 +185,90 @@
         justify-content: center;
     }
 
+    #bottom-container,
+    #bottom-buttons {
+        background-color: #f7f7f7;
+        padding-bottom: 24px;
+    }
+
     #rtt-submit{
         margin-top: 13px;
+    }
+
+    #originals-container{
+        display: flex;
+        width: 100%;
+    }
+
+    #sentence-container-outer{
+    }
+
+    .outer-container{
+        flex-basis: 40%;
+    }
+
+    #history-container {
+        flex-grow: 1;
+        flex-basis: 50%;
+        width: 80%;
+        margin: auto;
+    }
+
+    #current-input {
+        display: flex;
+        flex-grow: 1;
+    }
+
+    #user-inputs {
+        flex-grow: 1;
+        flex-basis: 50%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    #history-attempts {
+        margin-top: 13px;
+        max-height: 40vh;
+        overflow-y: scroll;
+    }
+
+    .paraphrase-attempt {
+        display: flex;
+        margin: auto;
+    }
+
+    .attempt-paraphrase {
+        border-right: 1px solid #ccc;
+    }
+
+    .attempt-paraphrase,
+    .attempt-translation {
+        flex-basis: 50%;
+    }
+
+    /* Feast your eyes upon the most advanced css ever written. */
+    .paraphrase-attempt:hover .attempt-paraphrase, 
+    .paraphrase-attempt:hover .attempt-translation {
+            background-color: #e6f3f5;
+            cursor: pointer;
+    }
+
+    .selected-attempt .attempt-paraphrase,
+    .selected-attempt .attempt-translation {
+        background-color: #ddffd9;;
+    }
+
+    #original-container-inner {
+        display: flex;
+        justify-content: center;
+        background-color: #f7f7f7;
+        padding: 26px 0px 26px 0px;
+        margin-bottom: 25px;
+        border-bottom: 1px solid #cccccc;
+    }
+
+    #footer {
+        width: 100%;
     }
   
   </style>
@@ -182,48 +283,60 @@
             </div>
             {% endif %}
      </div>
-     <div class="main-window">
-      {% if assignment_id == "ASSIGNMENT_ID_NOT_AVAILABLE" %}
-      <div id="preview">
-          Thank you for your interest in completing our HIT. 
-          Below you can find an example of a single question included in our HIT. 
-          <strong>Please note that one HIT contains 50 such questions.</strong> 
-    </div>
-      {% endif %}
-        <div class="description">
-            Rewrite the sentence on the top in the bottom left box by paraphrasing it. 
-            Then click submit to get a round trip translation of the text on the right.
-            Repeat the process until the Round Trip Translation adequately represents the meaning of the top sentence. 
-            Finish paraphrasing a sentence by clicking the "Submit" button. 
-            You can skip a sentence by clicking the "Skip" button.
+     <div id="current-input">
+        <div id="user-inputs">
+            <div id="originals-container">
+                <div id="original-container-inner">
+                    <div id="sentence-container-outer" class="outer-container">
+                        <div id="sentence-container-label">Original Sentence</div>
+                        <div id="sentence-container" class="cute-border"> </div>
+                    </div>
+
+                    <div id="translation-container-outer" class="outer-container">
+                        <div id="translation-container-label">Attempted Translation</div>
+                        <div id="translation-container" class="cute-border"> </div>
+                    </div>
+
+                </div>
+        </div>
+
+        <div id="history-container">
+                Attempt History
+             <div id="history-attempts">
+             </div>
+         </div>
+        <div id="footer">
+            <div id="bottom-container">
+                <div id="user-input-container">
+                    <div id="user-input-label">Your Paraphrase</div>
+                    <div id="user-input-wrapper">
+                        <textarea id="user-input" class="cute-border"></textarea>
+                    </div>
+                    <input class="button" id="rtt-submit" type="submit" value="Translate"> 
+                </div>
+                <div id="rtt-container">    
+                    <div id="rtt-container-label">Your Translation:</div>
+                    <textarea id="rtt-container-text" class="cute-border"></textarea>
+                </div>
+            </div>
+             <div id="bottom-buttons">
+                 <input id="skip-input" class="button" type="submit" value="Skip"> 
+                 <input id="submit" class="button" type="submit" value="Next"> 
+             </div>
+         </div>
+     </div>
+ </div>
+    <div class="description">
+        Rewrite the sentence on the top in the bottom left box by paraphrasing it. 
+        Then click submit to get a round trip translation of the text on the right.
+        Repeat the process until the Round Trip Translation adequately represents the meaning of the top sentence. 
+        Finish paraphrasing a sentence by clicking the "Submit" button. 
+        You can skip a sentence by clicking the "Skip" button.
         <div id="hit-counter">0/100</div>
     </div>
-    <div id="sentence-container-label">Original Sentence</div>
-    <div id="sentence-container" class="cute-border">
-    </div>
-    <div id="translation-container-label">Attempted Translation</div>
-    <div id="translation-container" class="cute-border">
-    </div>
 
-    <div id="bottom-container">
-        <div id="user-input-container">
-            <div id="user-input-label">Your Paraphrase</div>
-            <div id="user-input-wrapper">
-                <textarea id="user-input" class="cute-border"></textarea>
-            </div>
-            <input class="button" id="rtt-submit" type="submit" value="Translate"> 
-        </div>
-        <div id="rtt-container">    
-            <div id="rtt-container-label">Round Trip Translation:</div>
-            <textarea id="rtt-container-text" class="cute-border"></textarea>
-            </div>
-        </div>
-     <div id="bottom-buttons">
-         <input id="skip-input" class="button" type="submit" value="Skip"> 
-         <input id="submit" class="button" type="submit" value="Next"> 
-     </div>
-    </div>
-         </div>
+ </div>
+
   
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
   <script type="text/javascript">
@@ -235,6 +348,11 @@
    {
        // get the survey questions 
        $.getJSON("https://mturk.adeutry.info/paraphrase_1/get_paraphrase_sents", function (res){
+
+           // set the order values for the questions
+           for (var i = 0; i < res.length; i++) {
+               res[i].order = res.length - i;
+           }
 
            // store the questions in our app object
            app.questions = res;
@@ -266,23 +384,48 @@
            $("#translation-container").html(ques.trans_text)
 
            //clear old use entries
+           // I dont why but val and html both have to be cleared??
            $("#user-input").val("");
+           $("#user-input").html("");
+           $("#rtt-container-text").val("");
            $("#rtt-container-text").html("");
+
+           // clear history
+           $("#history-attempts").html("");
 
            //update count
            app.count++
            $("#hit-counter").html(app.count +" of " + app.maxCount);
 
        };
+    
+       // adding new attempts to attempt history
+       app.addAttemptToHistory = function( paraphrase, paraphraseTranslation ) {
+
+           var attemptElemString = '<div class="paraphrase-attempt cute-border">';
+           attemptElemString += '<div class="attempt-paraphrase">' + paraphrase + '</div>';
+           attemptElemString += '<div class="attempt-translation">' + paraphraseTranslation + '</div>';
+           attemptElemString += '</div>';
+
+           var attemptElem = $( attemptElemString );
+           $("#history-attempts").append( attemptElem );
+       };
 
        // handle translation requests
        $("#rtt-submit").click(function(e) {
                e.preventDefault();
-               console.log("submitting!!!");
                var userText = $("#user-input").val();
                $.get("https://mturk.adeutry.info/paraphrase_1/get_rtt", { text : userText }, function(res) {
-                    $("#rtt-container-text").html(res);
-                   });
+
+                    $("#rtt-container-text").val(res);
+
+                    // add attempt to attempt history
+                    var userParaphrase = $("#user-input").val();
+                    var userParaphraseTranslation = $("#rtt-container-text").val();
+
+                    app.addAttemptToHistory( userParaphrase, userParaphraseTranslation );
+                  });
+
            });
 
        // handle skipping a question
@@ -299,32 +442,70 @@
        // handle submitting the question
        $("#submit").click(function(e) {
                e.preventDefault();
+                
+               // check if user has selected an attempt to submit
+               if ( app.selectedAttempt == null ) {
+                   console.log( "Select an attempt you moron!" );
+               } else  {
+                    
+                   app.currentQues.paraphrase = app.selectedAttempt.attemptParaphrase;
+                   app.currentQues.paraphraseTranslation = app.selectedAttempt.attemptParaphrase;
 
-               // add answer to answer data
-               app.currentQues.paraphrase = $("#user-input").val();
-               app.currentQues.paraphraseTranslation = $("#rtt-container-text").val();
+                   // update timer 
+                   time = Date.now() - app.sentenceTimerStart;
+                   app.sentenceTimerStart = Date.now();
+                   app.currentQues.time = time;
 
-               // update timer 
-               time = Date.now() - app.sentenceTimerStart;
-               app.sentenceTimerStart = Date.now();
-               app.currentQues.time = time;
-
-               // retrieve the csrf token from DOM (this is a Django-specific security requirement)
-               var csrfToken = $("input[name=csrfmiddlewaretoken]")[0].value;
-               
-                $.post("paraphrase_1/submit_answer", {
-                        answerData : JSON.stringify(app.currentQues),
-                        csrfmiddlewaretoken : csrfToken
-                    },
-                    function () {
-                        if (app.questions.length > 0) {
-                            app.getNextQuestion();
-                        } else {
-                            window.location = "paraphrase_1/complete";
-                        }
+                   // retrieve the csrf token from DOM (this is a Django-specific security requirement)
+                   var csrfToken = $("input[name=csrfmiddlewaretoken]")[0].value;
+                   
+                    $.post("paraphrase_1/submit_answer", {
+                            answerData : JSON.stringify(app.currentQues),
+                            csrfmiddlewaretoken : csrfToken
+                        },
+                        function () {
+                            if (app.questions.length > 0) {
+                                app.getNextQuestion();
+                            } else {
+                                window.location = "paraphrase_1/complete";
+                            }
 
                     });
+               }
        });
+
+
+
+       // listen for history attempt clicks
+       $("#history-attempts").on("click", ".paraphrase-attempt", function (e) {
+               console.log("attempt clicked");
+
+               // get the attempt element by traversing upwards
+               var paraphraseAttempt = $( e.target ).closest(".paraphrase-attempt");
+               var attemptParaphrase = $( paraphraseAttempt ).find(".attempt-paraphrase").html();
+               var attemptTranslation = $( paraphraseAttempt ).find(".attempt-translation").html();
+               console.log("attempt paraphrase: " + attemptParaphrase);
+               console.log("attempt translation: " + attemptTranslation);
+
+               //remove old attempt style
+               $(".selected-attempt").removeClass( "selected-attempt" );
+
+               // set the attempt style
+               paraphraseAttempt.addClass( "selected-attempt" );
+
+               // set this paraphrase attempt to be the selected attempt
+               app.selectedAttempt = {
+                attemptParaphrase: attemptParaphrase,
+                attemptTranslation: attemptTranslation
+                };
+
+               // change the user's inputs
+               $("#user-input").val( attemptParaphrase );
+               $("#rtt-container-text").val( attemptTranslation );
+       });
+
+       // no attempt is selected by default
+       app.selectedAttempt = null;
 
        var submitAnswers = function() {
 
@@ -337,9 +518,16 @@
                     window.location = "paraphrase_1/complete";
                 }
            });
- 
-         
        }
+
+       // for testing purposes
+       /* 
+       for(var i = 0 ; i < 10 ; i++){
+           app.addAttemptToHistory( 
+                   "This is the attempt paraphrase",
+                   "This is the attempt translation");
+       }
+       */
    }
    if (window.addEventListener) window.addEventListener("load", autorun, false);
    else if (window.attachEvent) window.attachEvent("onload", autorun);
